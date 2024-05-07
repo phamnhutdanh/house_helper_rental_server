@@ -1,4 +1,4 @@
-import UserAccount from "./user_account/userAccount";
+import AccountInfo from "./account_info/accountInfo";
 
 export const enum RESOLVER_TYPE {
   Query,
@@ -6,6 +6,6 @@ export const enum RESOLVER_TYPE {
 }
 
 export const resolvers = {
-  Query: { ...UserAccount.resolver(RESOLVER_TYPE.Query) },
-  Mutation: { ...UserAccount.resolver(RESOLVER_TYPE.Mutation) },
+  Query: { ...AccountInfo.resolver(RESOLVER_TYPE.Query) },
+  Mutation: { ...AccountInfo.resolver(RESOLVER_TYPE.Mutation) },
 };

@@ -1,11 +1,13 @@
-import UserAccount from "./user_account/userAccount";
+import AccountInfo from "./account_info/accountInfo";
 
-export const typeDefs = `#graphql            
+export const typeDefs = `#graphql     
+   ${AccountInfo.typeDef()}
+   
    type Query {
-      ${UserAccount.query()}
+      ${AccountInfo.query()}
    }
 
    type Mutation {
-      ${UserAccount.mutation()}
+      ${AccountInfo.mutation()}
    }           
 `;

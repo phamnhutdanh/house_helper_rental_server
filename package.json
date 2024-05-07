@@ -1,5 +1,5 @@
 {
-  "name": "food-app-server",
+  "name": "house_helper_rental_server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -35,6 +35,6 @@
   },
   "engines": {
     "node": "18.18.2",
-    "npm": "10.2.5"
+    "npm": "10.7.0"
   }
 }
