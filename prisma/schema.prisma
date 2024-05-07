@@ -115,8 +115,8 @@ model Address {
 }
 
 model CustomerAddress {
-  id        String  @id @default(cuid())
-  isDefault Boolean @default(false)
+  id          String      @id @default(cuid())
+  addressType AddressType @default(NONE)
 
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
@@ -253,7 +253,7 @@ model BookingEmployee {
   bookingId  String
   booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 
-    @@map("booking_employees")
+  @@map("booking_employees")
 }
 
 model Booking {

@@ -1,4 +1,4 @@
-import { RESOLVER_TYPE } from "../resolvers";
+import { RESOLVER_TYPE } from "..";
 import { accountInfoResolver } from "./accountInfoResolver";
 
 export default class AccountInfo {
