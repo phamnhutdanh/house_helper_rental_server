@@ -1,0 +1,22 @@
+-- AlterTable
+ALTER TABLE "SessionInfo" ALTER COLUMN "expiresAt" SET DEFAULT 0,
+ALTER COLUMN "expiresIn" SET DEFAULT 0,
+ALTER COLUMN "isExpired" SET DEFAULT false,
+ALTER COLUMN "providerRefreshToken" SET DEFAULT '',
+ALTER COLUMN "providerToken" SET DEFAULT '',
+ALTER COLUMN "refreshToken" SET DEFAULT '',
+ALTER COLUMN "tokenType" SET DEFAULT '';
+
+-- AlterTable
+ALTER TABLE "customers" ALTER COLUMN "imageUri" DROP NOT NULL,
+ALTER COLUMN "imageUri" SET DEFAULT '';
+
+-- AlterTable
+ALTER TABLE "employees" ALTER COLUMN "imageUri" DROP NOT NULL,
+ALTER COLUMN "imageUri" SET DEFAULT '',
+ALTER COLUMN "description" DROP NOT NULL,
+ALTER COLUMN "description" SET DEFAULT '',
+ALTER COLUMN "age" DROP NOT NULL,
+ALTER COLUMN "age" SET DEFAULT 0,
+ALTER COLUMN "workingHours" DROP NOT NULL,
+ALTER COLUMN "workingHours" SET DEFAULT 0;

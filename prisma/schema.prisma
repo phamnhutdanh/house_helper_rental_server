@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 generator client {
   provider = "prisma-client-js"
 }
@@ -71,31 +66,30 @@ model AccountInfo {
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
   status    AccountStatus   @default(NONE)
-  //type              String
-  //provider          String
-  //providerAccountId String
-  //refresh_token     String? @db.Text
-  //access_token      String? @db.Text
-  //expires_at        Int?
-  //token_type        String?
-  //scope             String?
-  //id_token          String? @db.Text
-  //session_state     String?
   customer  Customer?
   employee  Employee?
+  sessions  SessionInfo[]
 
-  //@@unique([provider, providerAccountId])
   @@map("accounts_info")
 }
 
-// model Session {
-//   id           String   @id @default(cuid())
-//   sessionToken String   @unique
-//   expires      DateTime
+model SessionInfo {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  expires      DateTime
+  accessToken  String
 
-//   userId       String
-//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-// }
+  expiresAt            Int?     @default(0)
+  expiresIn            Int?     @default(0)
+  isExpired            Boolean? @default(false)
+  providerRefreshToken String?  @default("")
+  providerToken        String?  @default("")
+  refreshToken         String?  @default("")
+  tokenType            String?  @default("")
+
+  accountInfoId String
+  accountInfo   AccountInfo @relation(fields: [accountInfoId], references: [id], onDelete: Cascade)
+}
 
 // model VerificationToken {
 //   identifier String
@@ -141,10 +135,10 @@ model EmployeeAddress {
 }
 
 model Customer {
-  id          String @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
-  phoneNumber String @unique
-  imageUri    String
+  phoneNumber String?  @unique
+  imageUri    String? @default("")
 
   accountInfoId String      @unique @map("accountId")
   accountInfo   AccountInfo @relation(fields: [accountInfoId], references: [id], onDelete: Cascade)
@@ -158,13 +152,13 @@ model Customer {
 }
 
 model Employee {
-  id           String @id @default(cuid())
+  id           String  @id @default(cuid())
   name         String
-  phoneNumber  String @unique
-  imageUri     String
-  description  String
-  age          Int
-  workingHours Int
+  phoneNumber  String?  @unique
+  imageUri     String? @default("")
+  description  String? @default("")
+  age          Int?    @default(0)
+  workingHours Int?    @default(0)
 
   accountInfoId String      @unique
   accountInfo   AccountInfo @relation(fields: [accountInfoId], references: [id], onDelete: Cascade)

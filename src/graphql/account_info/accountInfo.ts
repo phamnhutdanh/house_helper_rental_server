@@ -11,7 +11,8 @@ export default class AccountInfo {
 
   static mutation() {
     return `#graphql
-        createCustomerAccount(email: String): Boolean 
+        createCustomerAccount(createCustomerAccountInput: CreateCustomerAccountInput, 
+                              createSessionInput: CreateSessionInput): AccountInfo 
     `;
   }
 
@@ -29,6 +30,25 @@ export default class AccountInfo {
             WARNING
         }
 
+        input CreateCustomerAccountInput {
+            email: String
+            name: String
+        }
+
+        input CreateSessionInput {
+            id: String
+            sessionToken: String
+            expires: String
+            accessToken: String
+            expiresAt: Int
+            expiresIn: Int
+            isExpired: Boolean
+            providerRefreshToken: String
+            providerToken: String
+            refreshToken: String
+            tokenType: String
+        }
+
         type AccountInfo {    
             id: String
             email: String
@@ -36,6 +56,21 @@ export default class AccountInfo {
             createdAt: String
             updatedAt: String
             status: AccountStatus
+        }
+        
+        type SessionInfo {
+            id: String
+            sessionToken: String
+            expires: String
+            accessToken: String
+            expiresAt: Int
+            expiresIn: Int
+            isExpired: Boolean
+            providerRefreshToken: String
+            providerToken: String
+            refreshToken: String
+            tokenType: String
+            accountInfoId: String
         }
     `;
   }

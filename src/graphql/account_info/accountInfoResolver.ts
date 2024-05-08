@@ -1,5 +1,25 @@
 import { prismaClient } from "../../lib/db";
 
+type CreateCustomerAccountInput = {
+  email: string;
+  name: string;
+};
+
+type CreateSessionInput = {
+  id: string;
+  sessionToken: string;
+  expires: string;
+  accessToken: string;
+
+  expiresAt: number;
+  expiresIn: number;
+  isExpired: boolean;
+  providerRefreshToken: string;
+  providerToken: string;
+  refreshToken: string;
+  tokenType: string;
+};
+
 const queries = {
   getAllAccountInfos: async () => {
     const accountInfos = await prismaClient.accountInfo.findMany();
@@ -19,31 +39,46 @@ const mutations = {
   createCustomerAccount: async (
     _: any,
     {
-      email,
+      createCustomerAccountInput,
+      createSessionInput,
     }: {
-      email: string;
+      createCustomerAccountInput: CreateCustomerAccountInput;
+      createSessionInput: CreateSessionInput;
     }
   ) => {
-    const response = await prismaClient.accountInfo
-      .create({
-        data: {
-          email: email,
-          role: "CUSTOMER",
-        },
-      })
-      .then(async (account) => {
-        // create user
-        return true;
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log("createCustomerAccount errorCode: ", errorCode);
-        console.log("createCustomerAccount errorMessage: ", errorMessage);
-        return false;
-      });
+    const responseAccountInfo = await prismaClient.accountInfo.create({
+      data: {
+        email: createCustomerAccountInput.email,
+        role: "CUSTOMER",
+      },
+    });
 
-    return response;
+    const responseSessionInfo = await prismaClient.sessionInfo.create({
+      data: {
+        id: createSessionInput.id,
+        sessionToken: createSessionInput.sessionToken,
+        expires: createSessionInput.expires,
+        accessToken: createSessionInput.accessToken,
+
+        expiresAt: createSessionInput.expiresAt,
+        expiresIn: createSessionInput.expiresIn,
+        isExpired: createSessionInput.isExpired,
+        providerRefreshToken: createSessionInput.providerRefreshToken,
+        providerToken: createSessionInput.providerToken,
+        refreshToken: createSessionInput.refreshToken,
+        tokenType: createSessionInput.tokenType,
+        accountInfoId: responseAccountInfo.id,
+      },
+    });
+
+    const responseCustomerInfo = await prismaClient.customer.create({
+      data: {
+        name: createCustomerAccountInput.name,
+        accountInfoId: responseAccountInfo.id,
+      },
+    });
+
+    return responseCustomerInfo;
   },
 };
 
