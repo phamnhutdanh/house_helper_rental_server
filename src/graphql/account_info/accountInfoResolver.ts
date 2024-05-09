@@ -6,7 +6,6 @@ type CreateCustomerAccountInput = {
 };
 
 type CreateSessionInput = {
-  id: string;
   sessionToken: string;
   expires: string;
   accessToken: string;
@@ -55,7 +54,6 @@ const mutations = {
 
     const responseSessionInfo = await prismaClient.sessionInfo.create({
       data: {
-        id: createSessionInput.id,
         sessionToken: createSessionInput.sessionToken,
         expires: createSessionInput.expires,
         accessToken: createSessionInput.accessToken,
@@ -78,7 +76,7 @@ const mutations = {
       },
     });
 
-    return responseCustomerInfo;
+    return responseAccountInfo;
   },
 };
 

@@ -36,7 +36,6 @@ export default class AccountInfo {
         }
 
         input CreateSessionInput {
-            id: String
             sessionToken: String
             expires: String
             accessToken: String
