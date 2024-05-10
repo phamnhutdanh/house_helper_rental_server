@@ -33,6 +33,7 @@ export default class AccountInfo {
         input CreateCustomerAccountInput {
             email: String
             name: String
+            accountId: String
         }
 
         input CreateSessionInput {
@@ -51,7 +52,7 @@ export default class AccountInfo {
         type AccountInfo {    
             id: String
             email: String
-            role: AccountInfoRole
+            accountRole: AccountInfoRole
             createdAt: String
             updatedAt: String
             status: AccountStatus

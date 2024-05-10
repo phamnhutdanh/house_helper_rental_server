@@ -3,6 +3,7 @@ import { prismaClient } from "../../lib/db";
 type CreateCustomerAccountInput = {
   email: string;
   name: string;
+  accountId: string
 };
 
 type CreateSessionInput = {
@@ -47,8 +48,10 @@ const mutations = {
   ) => {
     const responseAccountInfo = await prismaClient.accountInfo.create({
       data: {
+        id: createCustomerAccountInput.accountId,
         email: createCustomerAccountInput.email,
-        role: "CUSTOMER",
+        accountRole: "CUSTOMER",
+        status: "NONE"
       },
     });
 
