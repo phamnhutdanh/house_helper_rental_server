@@ -20,6 +20,12 @@ enum AccountStatus {
   WARNING
 }
 
+enum EmployeeAccountStatus {
+  PENDING
+  ACCEPTED
+  CANCELED
+}
+
 enum BookingStatus {
   PENDING
   ACCEPTED
@@ -60,15 +66,16 @@ enum ScheduleType {
 }
 
 model AccountInfo {
-  id        String          @id @default(cuid())
-  email     String          @unique
-  accountRole      AccountInfoRole @default(CUSTOMER)
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  status    AccountStatus   @default(NONE)
-  customer  Customer?
-  employee  Employee?
-  sessions  SessionInfo[]
+  id          String          @id @default(cuid())
+  email       String          @unique
+  accountRole AccountInfoRole @default(CUSTOMER)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  status      AccountStatus   @default(NONE)
+
+  sessions SessionInfo[]
+  customer Customer?
+  employee Employee?
 
   @@map("accounts_info")
 }
@@ -87,8 +94,10 @@ model SessionInfo {
   refreshToken         String?  @default("")
   tokenType            String?  @default("")
 
-  accountInfoId String
+  accountInfoId String      @unique
   accountInfo   AccountInfo @relation(fields: [accountInfoId], references: [id], onDelete: Cascade)
+
+  @@map("sessions_info")
 }
 
 // model VerificationToken {
@@ -137,10 +146,10 @@ model EmployeeAddress {
 model Customer {
   id          String  @id @default(cuid())
   name        String
-  phoneNumber String?  @unique
+  phoneNumber String? @unique
   imageUri    String? @default("")
 
-  accountInfoId String      @unique @map("accountId")
+  accountInfoId String      @unique
   accountInfo   AccountInfo @relation(fields: [accountInfoId], references: [id], onDelete: Cascade)
 
   ratings               RatingEmployee[]
@@ -151,10 +160,24 @@ model Customer {
   @@map("customers")
 }
 
+model EmployeeAccountRequest {
+  id String @id @default(cuid())
+
+  name         String
+  email        String
+  hashPassword String
+  keyPassword  String
+  status       EmployeeAccountStatus @default(PENDING)
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  @@map("employee_account_requests")
+}
+
 model Employee {
   id           String  @id @default(cuid())
   name         String
-  phoneNumber  String?  @unique
+  phoneNumber  String? @unique
   imageUri     String? @default("")
   description  String? @default("")
   age          Int?    @default(0)
@@ -183,6 +206,17 @@ model Job {
   bookings     Booking[]
 
   @@map("jobs")
+}
+
+model Service {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  imageUri    String?
+
+  bookings Booking[]
+
+  @@map("services")
 }
 
 model EmployeeJob {
@@ -226,17 +260,6 @@ model Schedule {
   scheduleJobs ScheduleJob[]
 
   @@map("schedules")
-}
-
-model Service {
-  id          String  @id @default(cuid())
-  name        String
-  description String?
-  imageUri    String?
-
-  bookings Booking[]
-
-  @@map("services")
 }
 
 model BookingEmployee {

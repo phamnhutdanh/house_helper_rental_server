@@ -6,6 +6,7 @@ export default class AccountInfo {
     return `#graphql
         getAllAccountInfos: [AccountInfo]
         getAccountInfoById(id: String): AccountInfo
+        getAllEmployeeAccountRequests: [EmployeeAccountRequest]
     `;
   }
 
@@ -13,6 +14,9 @@ export default class AccountInfo {
     return `#graphql
         createCustomerAccount(createCustomerAccountInput: CreateCustomerAccountInput, 
                               createSessionInput: CreateSessionInput): AccountInfo 
+        createEmployeeAccount(createEmployeeAccountInput: CreateEmployeeAccountInput, 
+                              createSessionInput: CreateSessionInput): AccountInfo    
+        createEmployeeAccountRequest(createEmployeeAccountRequest: CreateEmployeeAccountRequest): EmployeeAccountRequest                         
     `;
   }
 
@@ -30,7 +34,26 @@ export default class AccountInfo {
             WARNING
         }
 
+        enum EmployeeAccountStatus {
+            PENDING
+            ACCEPTED
+            CANCELED
+        }
+
         input CreateCustomerAccountInput {
+            email: String
+            name: String
+            accountId: String
+        }
+
+        input CreateEmployeeAccountRequest {
+            name: String
+            email: String
+            hashPassword: String
+            keyPassword: String
+        }
+
+        input CreateEmployeeAccountInput {
             email: String
             name: String
             accountId: String
@@ -56,6 +79,17 @@ export default class AccountInfo {
             createdAt: String
             updatedAt: String
             status: AccountStatus
+        }
+
+        type EmployeeAccountRequest {    
+            id: String
+            name: String
+            email: String
+            hashPassword: String
+            keyPassword: String
+            createdAt: String
+            updatedAt: String
+            status: EmployeeAccountStatus
         }
         
         type SessionInfo {

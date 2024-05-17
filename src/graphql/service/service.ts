@@ -4,7 +4,8 @@ import { serviceResolver } from "./serviceResolver";
 export default class Service {
   static query() {
     return `#graphql
-        
+        getAllServices: [Service]
+        getServiceById(id: String): Service
     `;
   }
 
