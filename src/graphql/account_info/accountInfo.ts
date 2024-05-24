@@ -12,10 +12,8 @@ export default class AccountInfo {
 
   static mutation() {
     return `#graphql
-        createCustomerAccount(createCustomerAccountInput: CreateCustomerAccountInput, 
-                              createSessionInput: CreateSessionInput): AccountInfo 
-        createEmployeeAccount(createEmployeeAccountInput: CreateEmployeeAccountInput, 
-                              createSessionInput: CreateSessionInput): AccountInfo    
+        createAccount(createAccountInput: CreateAccountInput, 
+                              createSessionInput: CreateSessionInput): AccountInfo  
         createEmployeeAccountRequest(createEmployeeAccountRequest: CreateEmployeeAccountRequest): EmployeeAccountRequest                         
     `;
   }
@@ -40,10 +38,11 @@ export default class AccountInfo {
             CANCELED
         }
 
-        input CreateCustomerAccountInput {
+        input CreateAccountInput {
             email: String
             name: String
             accountId: String
+            isEmployee: Boolean
         }
 
         input CreateEmployeeAccountRequest {
@@ -51,12 +50,6 @@ export default class AccountInfo {
             email: String
             hashPassword: String
             keyPassword: String
-        }
-
-        input CreateEmployeeAccountInput {
-            email: String
-            name: String
-            accountId: String
         }
 
         input CreateSessionInput {

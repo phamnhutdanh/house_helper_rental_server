@@ -146,7 +146,7 @@ model EmployeeAddress {
 model Customer {
   id          String  @id @default(cuid())
   name        String
-  phoneNumber String? @unique
+  phoneNumber String? @unique @default("")
   imageUri    String? @default("")
 
   accountInfoId String      @unique
@@ -175,13 +175,14 @@ model EmployeeAccountRequest {
 }
 
 model Employee {
-  id           String  @id @default(cuid())
-  name         String
-  phoneNumber  String? @unique
-  imageUri     String? @default("")
-  description  String? @default("")
-  age          Int?    @default(0)
-  workingHours Int?    @default(0)
+  id            String  @id @default(cuid())
+  name          String
+  phoneNumber   String? @unique @default("")
+  imageUri      String? @default("")
+  description   String? @default("")
+  age           Int?    @default(0)
+  workingHours  Int?    @default(0)
+  averageRating Float?  @default(0)
 
   accountInfoId String      @unique
   accountInfo   AccountInfo @relation(fields: [accountInfoId], references: [id], onDelete: Cascade)
@@ -211,8 +212,8 @@ model Job {
 model Service {
   id          String  @id @default(cuid())
   name        String
-  description String?
-  imageUri    String?
+  description String? @default("")
+  imageUri    String? @default("")
 
   bookings Booking[]
 
@@ -329,7 +330,7 @@ model FavoriteEmployee {
 model NotificationEmployee {
   id          String   @id @default(cuid())
   description String
-  imageUri    String?
+  imageUri    String?  @default("")
   employeeId  String
   employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
@@ -339,7 +340,7 @@ model NotificationEmployee {
 model NotificationCustomer {
   id          String   @id @default(cuid())
   description String
-  imageUri    String?
+  imageUri    String?  @default("")
   customerId  String
   customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 

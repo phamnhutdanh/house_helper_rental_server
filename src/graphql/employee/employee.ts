@@ -4,7 +4,8 @@ import { employeeResolver } from "./employeeResolver";
 export default class Employee {
   static query() {
     return `#graphql
-        
+        getAllEmployees: [Employee]
+        getTopEmployees: [Employee]
     `;
   }
 
@@ -25,6 +26,7 @@ export default class Employee {
             age: Int
             workingHours: Int
             accountInfoId: String
+            averageRating: Float
         }
 
         type FavoriteEmployee {    

@@ -1,15 +1,10 @@
 import { prismaClient } from "../../lib/db";
 
-type CreateCustomerAccountInput = {
+type CreateAccountInput = {
   email: string;
   name: string;
   accountId: string;
-};
-
-type CreateEmployeeAccountInput = {
-  email: string;
-  name: string;
-  accountId: string;
+  isEmployee: boolean;
 };
 
 type CreateEmployeeAccountRequest = {
@@ -47,30 +42,62 @@ const queries = {
     return accountInfo;
   },
   getAllEmployeeAccountRequests: async () => {
-    const accountRequests = await prismaClient.employeeAccountRequest.findMany();
+    const accountRequests =
+      await prismaClient.employeeAccountRequest.findMany();
     return accountRequests;
   },
 };
 
 const mutations = {
-  createCustomerAccount: async (
+  createAccount: async (
     _: any,
     {
-      createCustomerAccountInput,
+      createAccountInput,
       createSessionInput,
     }: {
-      createCustomerAccountInput: CreateCustomerAccountInput;
+      createAccountInput: CreateAccountInput;
       createSessionInput: CreateSessionInput;
     }
   ) => {
-    const responseAccountInfo = await prismaClient.accountInfo.create({
-      data: {
-        id: createCustomerAccountInput.accountId,
-        email: createCustomerAccountInput.email,
-        accountRole: "CUSTOMER",
-        status: "NONE",
-      },
-    });
+    let responseAccountInfo;
+
+    if (createAccountInput.isEmployee) {
+      responseAccountInfo = await prismaClient.accountInfo.create({
+        data: {
+          id: createAccountInput.accountId,
+          email: createAccountInput.email,
+          accountRole: "EMPLOYEE",
+          status: "NONE",
+        },
+      });
+
+      const responseEmployeeInfo = await prismaClient.employee.create({
+        data: {
+          name: createAccountInput.name,
+          accountInfoId: responseAccountInfo.id,
+          imageUri:
+            "https://ktlpvxvfzxexvghactxx.supabase.co/storage/v1/object/sign/helpu_buckets/default_avatar.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJoZWxwdV9idWNrZXRzL2RlZmF1bHRfYXZhdGFyLnBuZyIsImlhdCI6MTcxNjUxMzgwMiwiZXhwIjoxNzQ4MDQ5ODAyfQ.gcbgZYp4FxUYWClgHSGLrE-KaWXXmHhX4qx-rXfi_Mo&t=2024-05-24T01%3A23%3A25.000Z",
+        },
+      });
+    } else {
+      responseAccountInfo = await prismaClient.accountInfo.create({
+        data: {
+          id: createAccountInput.accountId,
+          email: createAccountInput.email,
+          accountRole: "CUSTOMER",
+          status: "NONE",
+        },
+      });
+
+      const responseCustomerInfo = await prismaClient.customer.create({
+        data: {
+          name: createAccountInput.name,
+          accountInfoId: responseAccountInfo.id,
+          imageUri:
+            "https://ktlpvxvfzxexvghactxx.supabase.co/storage/v1/object/sign/helpu_buckets/default_avatar.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJoZWxwdV9idWNrZXRzL2RlZmF1bHRfYXZhdGFyLnBuZyIsImlhdCI6MTcxNjUxMzgwMiwiZXhwIjoxNzQ4MDQ5ODAyfQ.gcbgZYp4FxUYWClgHSGLrE-KaWXXmHhX4qx-rXfi_Mo&t=2024-05-24T01%3A23%3A25.000Z",
+        },
+      });
+    }
 
     const responseSessionInfo = await prismaClient.sessionInfo.create({
       data: {
@@ -85,58 +112,6 @@ const mutations = {
         providerToken: createSessionInput.providerToken,
         refreshToken: createSessionInput.refreshToken,
         tokenType: createSessionInput.tokenType,
-        accountInfoId: responseAccountInfo.id,
-      },
-    });
-
-    const responseCustomerInfo = await prismaClient.customer.create({
-      data: {
-        name: createCustomerAccountInput.name,
-        accountInfoId: responseAccountInfo.id,
-      },
-    });
-
-    return responseAccountInfo;
-  },
-  createEmployeeAccount: async (
-    _: any,
-    {
-      createEmployeeAccountInput,
-      createSessionInput,
-    }: {
-      createEmployeeAccountInput: CreateEmployeeAccountInput;
-      createSessionInput: CreateSessionInput;
-    }
-  ) => {
-    const responseAccountInfo = await prismaClient.accountInfo.create({
-      data: {
-        id: createEmployeeAccountInput.accountId,
-        email: createEmployeeAccountInput.email,
-        accountRole: "EMPLOYEE",
-        status: "NONE",
-      },
-    });
-
-    const responseSessionInfo = await prismaClient.sessionInfo.create({
-      data: {
-        sessionToken: createSessionInput.sessionToken,
-        expires: createSessionInput.expires,
-        accessToken: createSessionInput.accessToken,
-
-        expiresAt: createSessionInput.expiresAt,
-        expiresIn: createSessionInput.expiresIn,
-        isExpired: createSessionInput.isExpired,
-        providerRefreshToken: createSessionInput.providerRefreshToken,
-        providerToken: createSessionInput.providerToken,
-        refreshToken: createSessionInput.refreshToken,
-        tokenType: createSessionInput.tokenType,
-        accountInfoId: responseAccountInfo.id,
-      },
-    });
-
-    const responseEmployeeInfo = await prismaClient.employee.create({
-      data: {
-        name: createEmployeeAccountInput.name,
         accountInfoId: responseAccountInfo.id,
       },
     });
