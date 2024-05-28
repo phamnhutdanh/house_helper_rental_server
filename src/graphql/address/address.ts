@@ -24,6 +24,8 @@ export default class Address {
         type Address {    
             id: String
             address: String
+            fullName: String
+            phone: String
         }
 
         type CustomerAddress {    

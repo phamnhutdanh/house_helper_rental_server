@@ -10,6 +10,9 @@ const queries = {
       where: {
         id: id,
       },
+      include: {
+        serviceDetails: true,
+      },
     });
     return service;
   },

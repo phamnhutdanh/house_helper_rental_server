@@ -22,6 +22,18 @@ export default class Service {
             name: String
             description: String
             imageUri: String
+            serviceCode: String
+            serviceDetails: [ServiceDetails]
+        }
+
+        type ServiceDetails {
+            id: String
+            name: String
+            description: String
+            imageUri: String
+            fee: Int
+            serviceDetailCode: String
+            serviceId: String
         }
     `;
   }

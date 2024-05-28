@@ -3,7 +3,6 @@ import Address from "./address/address";
 import Booking from "./booking/booking";
 import Customer from "./customer/customer";
 import Employee from "./employee/employee";
-import Job from "./job/job";
 import Schedule from "./schedule/schedule";
 import Service from "./service/service";
 
@@ -18,7 +17,6 @@ const typeDefs = `#graphql
    ${Customer.typeDef()}
    ${Employee.typeDef()}
    ${Booking.typeDef()}   
-   ${Job.typeDef()}   
    ${Service.typeDef()}   
    ${Schedule.typeDef()}
    
@@ -28,7 +26,6 @@ const typeDefs = `#graphql
       ${Customer.query()}
       ${Employee.query()}
       ${Booking.query()}   
-      ${Job.query()}   
       ${Service.query()}   
       ${Schedule.query()}
    }
@@ -39,7 +36,6 @@ const typeDefs = `#graphql
       ${Customer.mutation()}
       ${Employee.mutation()}
       ${Booking.mutation()}   
-      ${Job.mutation()}   
       ${Service.mutation()}   
       ${Schedule.mutation()}
    }           
@@ -52,7 +48,6 @@ const resolvers = {
     ...Customer.resolver(RESOLVER_TYPE.Query),
     ...Employee.resolver(RESOLVER_TYPE.Query),
     ...Booking.resolver(RESOLVER_TYPE.Query),
-    ...Job.resolver(RESOLVER_TYPE.Query),
     ...Schedule.resolver(RESOLVER_TYPE.Query),
     ...Service.resolver(RESOLVER_TYPE.Query),
   },
@@ -62,7 +57,6 @@ const resolvers = {
     ...Customer.resolver(RESOLVER_TYPE.Mutation),
     ...Employee.resolver(RESOLVER_TYPE.Mutation),
     ...Booking.resolver(RESOLVER_TYPE.Mutation),
-    ...Job.resolver(RESOLVER_TYPE.Mutation),
     ...Schedule.resolver(RESOLVER_TYPE.Mutation),
     ...Service.resolver(RESOLVER_TYPE.Mutation),
   },

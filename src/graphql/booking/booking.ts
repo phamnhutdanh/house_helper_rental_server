@@ -27,23 +27,39 @@ export default class Booking {
             COD
             MOMO
         }
+
+        enum RepeatBookingStatus {
+            NO_REPEAT
+            EVERY_DAY
+            EVERY_WEEK
+            EVERY_MONTH
+        }
+
         type Booking {    
             id: String
-            numsOfEmployee: Int
             bookingTime: String
-            totalPrice: Float
             status: BookingStatus
+            repeatStatus: RepeatBookingStatus
+            totalPrice: Int
+            note: String
             paymentMethod: PaymentMethod
+
             createdAt: String
             updatedAt: String
             serviceId: String
-            jobId: String
+            customerId: String
             customerAddressId: String
         }
 
         type BookingEmployee {    
             id: String
             employeeId: String
+            bookingId: String
+        }
+
+        type BookingServiceDetail {    
+            id: String
+            serviceDetailId: String
             bookingId: String
         }
     `;

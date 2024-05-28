@@ -65,6 +65,13 @@ enum ScheduleType {
   NONE
 }
 
+enum RepeatBookingStatus {
+  NO_REPEAT
+  EVERY_DAY
+  EVERY_WEEK
+  EVERY_MONTH
+}
+
 model AccountInfo {
   id          String          @id @default(cuid())
   email       String          @unique
@@ -109,8 +116,11 @@ model SessionInfo {
 // }
 
 model Address {
-  id                String            @id @default(cuid())
-  address           String
+  id       String @id @default(cuid())
+  fullName String
+  phone    String
+  address  String
+
   customerAddresses CustomerAddress[]
   employeeAddresses EmployeeAddress[]
 
@@ -156,6 +166,7 @@ model Customer {
   customerAddresses     CustomerAddress[]
   favoriteEmployees     FavoriteEmployee[]
   notificationCustomers NotificationCustomer[]
+  bookings              Booking[]
 
   @@map("customers")
 }
@@ -189,7 +200,6 @@ model Employee {
 
   ratings               RatingEmployee[]
   employeeAddresses     EmployeeAddress[]
-  employeeJobs          EmployeeJob[]
   schedules             Schedule[]
   bookingEmployees      BookingEmployee[]
   favoriteEmployees     FavoriteEmployee[]
@@ -198,48 +208,78 @@ model Employee {
   @@map("employees")
 }
 
-model Job {
-  id   String @id @default(cuid())
-  name String
-
-  employeeJobs EmployeeJob[]
-  scheduleJobs ScheduleJob[]
-  bookings     Booking[]
-
-  @@map("jobs")
-}
-
 model Service {
   id          String  @id @default(cuid())
   name        String
+  serviceCode String
   description String? @default("")
   imageUri    String? @default("")
 
-  bookings Booking[]
+  bookings       Booking[]
+  serviceDetails ServiceDetails[]
 
   @@map("services")
 }
 
-model EmployeeJob {
-  id String @id @default(cuid())
+model ServiceDetails {
+  id                String  @id @default(cuid())
+  name              String
+  serviceDetailCode String
+  description       String? @default("")
+  imageUri          String? @default("")
+  fee               Int     @default(0)
 
-  jobId      String
-  job        Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  employeeId String
-  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  serviceId             String
+  service               Service                @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  bookingServiceDetails BookingServiceDetail[]
 
-  @@map("employee_jobs")
+  @@map("service_details")
 }
 
-model ScheduleJob {
+model BookingEmployee {
   id String @id @default(cuid())
 
-  jobId      String
-  job        Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  scheduleId String
-  schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  bookingId  String
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 
-  @@map("schedule_jobs")
+  @@map("booking_employees")
+}
+
+model BookingServiceDetail {
+  id String @id @default(cuid())
+
+  serviceDetailId String
+  serviceDetails  ServiceDetails @relation(fields: [serviceDetailId], references: [id], onDelete: Cascade)
+  bookingId       String
+  booking         Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id            String              @id @default(cuid())
+  bookingTime   DateTime            @default(now())
+  status        BookingStatus       @default(PENDING)
+  repeatStatus  RepeatBookingStatus @default(NO_REPEAT)
+  paymentMethod PaymentMethod       @default(COD)
+  note          String?             @default("")
+
+  totalPrice Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  customerId        String
+  customer          Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerAddressId String
+  customerAddress   CustomerAddress @relation(fields: [customerAddressId], references: [id], onDelete: Cascade)
+  serviceId         String
+  service           Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  bookingServiceDetails BookingServiceDetail[]
+  bookingEmployees      BookingEmployee[]
+  ratingEmployees       RatingEmployee[]
+
+  @@map("bookings")
 }
 
 model Schedule {
@@ -258,45 +298,7 @@ model Schedule {
   employeeId String
   employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
-  scheduleJobs ScheduleJob[]
-
   @@map("schedules")
-}
-
-model BookingEmployee {
-  id String @id @default(cuid())
-
-  employeeId String
-  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  bookingId  String
-  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-
-  @@map("booking_employees")
-}
-
-model Booking {
-  id             String        @id @default(cuid())
-  numsOfEmployee Int
-  bookingTime    DateTime      @default(now())
-  totalPrice     Float
-  status         BookingStatus @default(PENDING)
-  paymentMethod  PaymentMethod @default(COD)
-  note           String?       @default("")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  serviceId         String
-  service           Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  jobId             String
-  job               Job             @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  customerAddressId String
-  customerAddress   CustomerAddress @relation(fields: [customerAddressId], references: [id], onDelete: Cascade)
-
-  bookingEmployees BookingEmployee[]
-  ratingEmployees  RatingEmployee[]
-
-  @@map("bookings")
 }
 
 model RatingEmployee {
