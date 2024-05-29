@@ -4,13 +4,14 @@ import { addressResolver } from "./addressResolver";
 export default class Address {
   static query() {
     return `#graphql
-        
+
     `;
   }
 
   static mutation() {
     return `#graphql
-       
+       createCustomerAddress(createAddressInput: CreateAddressInput, 
+                            createCustomerAddressInput: CreateCustomerAddressInput): CustomerAddress  
     `;
   }
 
@@ -19,6 +20,17 @@ export default class Address {
         enum AddressType {
             DEFAULT
             NONE
+        }
+
+        input CreateAddressInput {
+            address: String
+            fullName: String
+            phone: String
+        }
+
+        input CreateCustomerAddressInput {
+            customerId: String
+            isDefault: Boolean
         }
 
         type Address {    

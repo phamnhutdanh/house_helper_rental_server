@@ -4,13 +4,14 @@ import { bookingResolver } from "./bookingResolver";
 export default class Booking {
   static query() {
     return `#graphql
-        
+  
     `;
   }
 
   static mutation() {
     return `#graphql
-       
+       createBooking(createBookingInput: CreateBookingInput,
+                      createBookingServiceDetailListInput: [CreateBookingServiceDetail]): Booking
     `;
   }
 
@@ -33,6 +34,21 @@ export default class Booking {
             EVERY_DAY
             EVERY_WEEK
             EVERY_MONTH
+        }
+
+        input CreateBookingInput {
+            bookingTime: String
+            repeatStatus: String
+            totalPrice: Int
+            note: String
+            paymentMethod: String
+            serviceId: String
+            customerId: String
+            customerAddressId: String
+        }
+
+        input CreateBookingServiceDetail {
+            serviceDetailId: String
         }
 
         type Booking {    
