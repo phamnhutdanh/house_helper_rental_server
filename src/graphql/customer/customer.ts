@@ -22,6 +22,7 @@ export default class Customer {
             phoneNumber: String
             imageUri: String
             accountInfoId: String
+            customerAddresses: [CustomerAddress]
         }
 
         type NotificationCustomer {    

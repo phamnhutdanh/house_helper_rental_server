@@ -40,6 +40,9 @@ const mutations = {
           addressId: addressResponse.id,
           customerId: createCustomerAddressInput.customerId,
         },
+        include: {
+          address: true,
+        },
       });
     } else {
       customerAddressResponse = await prismaClient.customerAddress.create({
@@ -47,6 +50,9 @@ const mutations = {
           addressType: "NONE",
           addressId: addressResponse.id,
           customerId: createCustomerAddressInput.customerId,
+        },
+        include: {
+          address: true,
         },
       });
     }

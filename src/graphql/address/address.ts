@@ -45,6 +45,7 @@ export default class Address {
             addressType: AddressType
             customerId: String
             addressId: String
+            address: Address
         }
 
         type EmployeeAddress {    

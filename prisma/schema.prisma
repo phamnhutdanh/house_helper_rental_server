@@ -72,6 +72,11 @@ enum RepeatBookingStatus {
   EVERY_MONTH
 }
 
+enum NotificationStatus {
+  READ
+  UNREAD
+}
+
 model AccountInfo {
   id          String          @id @default(cuid())
   email       String          @unique
@@ -256,7 +261,6 @@ model BookingServiceDetail {
   booking         Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 
   @@map("booking_service_details")
-
 }
 
 model Booking {
@@ -333,21 +337,31 @@ model FavoriteEmployee {
 }
 
 model NotificationEmployee {
-  id          String   @id @default(cuid())
+  id          String             @id @default(cuid())
+  title       String
   description String
-  imageUri    String?  @default("")
+  status      NotificationStatus @default(UNREAD)
+  imageUri    String?            @default("")
   employeeId  String
-  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employee    Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("notification_employees")
 }
 
 model NotificationCustomer {
-  id          String   @id @default(cuid())
+  id          String             @id @default(cuid())
+  title       String
   description String
-  imageUri    String?  @default("")
+  status      NotificationStatus @default(UNREAD)
+  imageUri    String?            @default("")
   customerId  String
-  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer    Customer           @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("notification_customers")
 }

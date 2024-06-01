@@ -11,21 +11,21 @@ type CreateBookingInput = {
   customerAddressId: string;
 };
 
-type CreateBookingServiceDetail = {
+type CreateBookingServiceDetailInput = {
   serviceDetailId: string;
 };
 
 const queries = {};
 
 const mutations = {
-  createCustomerAddress: async (
+  createBooking: async (
     _: any,
     {
       createBookingInput,
       createBookingServiceDetailListInput,
     }: {
       createBookingInput: CreateBookingInput;
-      createBookingServiceDetailListInput: CreateBookingServiceDetail[];
+      createBookingServiceDetailListInput: CreateBookingServiceDetailInput[];
     }
   ) => {
     let repeatStatus = createBookingInput.repeatStatus;

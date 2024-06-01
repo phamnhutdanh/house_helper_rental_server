@@ -30,13 +30,45 @@ type CreateSessionInput = {
 
 const queries = {
   getAllAccountInfos: async () => {
-    const accountInfos = await prismaClient.accountInfo.findMany();
+    const accountInfos = await prismaClient.accountInfo.findMany({
+      where: {
+        accountRole: {
+          not: {
+            equals: "ADMIN",
+          },
+        },
+      },
+      include: {
+        employee: true,
+        customer: {
+          include: {
+            customerAddresses: {
+              include: {
+                address: true,
+              },
+            },
+          },
+        },
+      },
+    });
     return accountInfos;
   },
   getAccountInfoById: async (_: any, { id }: { id: string }) => {
     const accountInfo = await prismaClient.accountInfo.findUnique({
       where: {
         id: id,
+      },
+      include: {
+        employee: true,
+        customer: {
+          include: {
+            customerAddresses: {
+              include: {
+                address: true,
+              },
+            },
+          },
+        },
       },
     });
     return accountInfo;
@@ -69,6 +101,17 @@ const mutations = {
           accountRole: "EMPLOYEE",
           status: "NONE",
         },
+        include: {
+          customer: {
+            include: {
+              customerAddresses: {
+                include: {
+                  address: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       const responseEmployeeInfo = await prismaClient.employee.create({
@@ -86,6 +129,17 @@ const mutations = {
           email: createAccountInput.email,
           accountRole: "CUSTOMER",
           status: "NONE",
+        },
+        include: {
+          customer: {
+            include: {
+              customerAddresses: {
+                include: {
+                  address: true,
+                },
+              },
+            },
+          },
         },
       });
 

@@ -11,7 +11,7 @@ export default class Booking {
   static mutation() {
     return `#graphql
        createBooking(createBookingInput: CreateBookingInput,
-                      createBookingServiceDetailListInput: [CreateBookingServiceDetail]): Booking
+                      createBookingServiceDetailListInput: [CreateBookingServiceDetailInput]): Booking
     `;
   }
 
@@ -47,7 +47,7 @@ export default class Booking {
             customerAddressId: String
         }
 
-        input CreateBookingServiceDetail {
+        input CreateBookingServiceDetailInput {
             serviceDetailId: String
         }
 

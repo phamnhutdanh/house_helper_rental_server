@@ -72,6 +72,8 @@ export default class AccountInfo {
             createdAt: String
             updatedAt: String
             status: AccountStatus
+            customer: Customer
+            employee: Employee
         }
 
         type EmployeeAccountRequest {    
