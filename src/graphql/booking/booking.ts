@@ -43,7 +43,7 @@ export default class Booking {
             note: String
             paymentMethod: String
             serviceId: String
-            customerId: String
+            accountId: String
             customerAddressId: String
         }
 
@@ -65,12 +65,7 @@ export default class Booking {
             serviceId: String
             customerId: String
             customerAddressId: String
-        }
-
-        type BookingEmployee {    
-            id: String
             employeeId: String
-            bookingId: String
         }
 
         type BookingServiceDetail {    

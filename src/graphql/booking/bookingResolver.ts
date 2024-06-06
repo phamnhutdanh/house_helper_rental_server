@@ -7,7 +7,7 @@ type CreateBookingInput = {
   note: string;
   paymentMethod: string;
   serviceId: string;
-  customerId: string;
+  accountId: string;
   customerAddressId: string;
 };
 
@@ -30,6 +30,16 @@ const mutations = {
   ) => {
     let repeatStatus = createBookingInput.repeatStatus;
     let paymentMethod = createBookingInput.paymentMethod;
+
+    const customer = await prismaClient.accountInfo.findUnique({
+      where: {
+        id: createBookingInput.accountId,
+      },
+      include: {
+        customer: true,
+      },
+    });
+    
     const responseBooking = await prismaClient.booking.create({
       data: {
         bookingTime: createBookingInput.bookingTime,
@@ -45,7 +55,7 @@ const mutations = {
         note: createBookingInput.note,
         paymentMethod: paymentMethod === "COD" ? "COD" : "MOMO",
         serviceId: createBookingInput.serviceId,
-        customerId: createBookingInput.customerId,
+        customerId: customer?.customer?.id || "",
         customerAddressId: createBookingInput.customerAddressId,
         status: "PENDING",
       },

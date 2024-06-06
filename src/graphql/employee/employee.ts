@@ -27,6 +27,7 @@ export default class Employee {
             workingHours: Int
             accountInfoId: String
             averageRating: Float
+            employeeAddresses: [EmployeeAddress]
         }
 
         type FavoriteEmployee {    

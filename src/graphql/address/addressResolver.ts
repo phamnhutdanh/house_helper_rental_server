@@ -11,7 +11,46 @@ type CreateCustomerAddressInput = {
   isDefault: boolean;
 };
 
-const queries = {};
+const queries = {
+  getAllAddressOfCustomer: async (
+    _: any,
+    {
+      customerId,
+    }: {
+      customerId: string;
+    }
+  ) => {
+    const customerAddress = await prismaClient.customerAddress.findMany({
+      where: {
+        customerId: customerId,
+      },
+      include: {
+        address: true,
+        customer: true,
+      },
+    });
+    return customerAddress;
+  },
+  getCustomerAddressById: async (
+    _: any,
+    {
+      id,
+    }: {
+      id: string;
+    }
+  ) => {
+    const customerAddress = await prismaClient.customerAddress.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        address: true,
+        customer: true,
+      },
+    });
+    return customerAddress;
+  },
+};
 
 const mutations = {
   createCustomerAddress: async (
@@ -42,6 +81,7 @@ const mutations = {
         },
         include: {
           address: true,
+          customer: true,
         },
       });
     } else {
@@ -52,6 +92,7 @@ const mutations = {
           customerId: createCustomerAddressInput.customerId,
         },
         include: {
+          customer: true,
           address: true,
         },
       });

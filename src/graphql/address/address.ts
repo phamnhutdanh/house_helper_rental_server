@@ -4,7 +4,8 @@ import { addressResolver } from "./addressResolver";
 export default class Address {
   static query() {
     return `#graphql
-
+        getAllAddressOfCustomer(customerId: String): [CustomerAddress]
+        getCustomerAddressById(id: String): CustomerAddress
     `;
   }
 
@@ -44,6 +45,7 @@ export default class Address {
             id: String
             addressType: AddressType
             customerId: String
+            customer: Customer
             addressId: String
             address: Address
         }
@@ -52,7 +54,9 @@ export default class Address {
             id: String
             addressType: AddressType
             employeeId: String
+            employee: Employee
             addressId: String
+            address: Address
         }
     `;
   }

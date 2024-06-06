@@ -102,6 +102,15 @@ const mutations = {
           status: "NONE",
         },
         include: {
+          employee: {
+            include: {
+              employeeAddresses: {
+                include: {
+                  address: true,
+                },
+              },
+            },
+          },
           customer: {
             include: {
               customerAddresses: {
@@ -131,6 +140,15 @@ const mutations = {
           status: "NONE",
         },
         include: {
+          employee: {
+            include: {
+              employeeAddresses: {
+                include: {
+                  address: true,
+                },
+              },
+            },
+          },
           customer: {
             include: {
               customerAddresses: {
