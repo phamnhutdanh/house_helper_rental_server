@@ -5,13 +5,19 @@ export default class Address {
   static query() {
     return `#graphql
         getAllAddressOfCustomer(customerId: String): [CustomerAddress]
+        getAllAddressOfEmployee(employeeId: String): [EmployeeAddress]
         getCustomerAddressById(id: String): CustomerAddress
     `;
   }
 
   static mutation() {
     return `#graphql
-       createCustomerAddress(createAddressInput: CreateAddressInput, 
+      removeEmployeeAddress(id: String): EmployeeAddress
+      createEmployeeAddress(createAddressInput: CreateAddressInput, 
+                            createEmployeeAddressInput: CreateEmployeeAddressInput): EmployeeAddress 
+
+      removeCustomerAddress(id: String): CustomerAddress
+      createCustomerAddress(createAddressInput: CreateAddressInput, 
                             createCustomerAddressInput: CreateCustomerAddressInput): CustomerAddress  
     `;
   }
@@ -27,6 +33,11 @@ export default class Address {
             address: String
             fullName: String
             phone: String
+        }
+
+        input CreateEmployeeAddressInput {
+            employeeId: String
+            isDefault: Boolean
         }
 
         input CreateCustomerAddressInput {

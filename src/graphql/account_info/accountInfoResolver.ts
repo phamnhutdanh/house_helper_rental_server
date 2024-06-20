@@ -7,11 +7,35 @@ type CreateAccountInput = {
   isEmployee: boolean;
 };
 
+type UpdateCustomerInput = {
+  customerId: string;
+  name: string;
+  phone: string;
+  imageUri: string;
+};
+
+type UpdateEmployeeInput = {
+  employeeId: string;
+  name: string;
+  phone: string;
+  imageUri: string;
+  description: string;
+};
 type CreateEmployeeAccountRequest = {
   name: string;
   email: string;
   hashPassword: string;
   keyPassword: string;
+};
+
+type ChangeNotiInput = {
+  id: string;
+  status: string;
+};
+
+type AccountStatusInput = {
+  accountId: string;
+  status: string;
 };
 
 type CreateSessionInput = {
@@ -59,7 +83,15 @@ const queries = {
         id: id,
       },
       include: {
-        employee: true,
+        employee: {
+          include: {
+            employeeAddresses: {
+              include: {
+                address: true,
+              },
+            },
+          },
+        },
         customer: {
           include: {
             customerAddresses: {
@@ -77,6 +109,25 @@ const queries = {
     const accountRequests =
       await prismaClient.employeeAccountRequest.findMany();
     return accountRequests;
+  },
+  getNotificationOfAccount: async (
+    _: any,
+    { accountId }: { accountId: string }
+  ) => {
+    const noti = await prismaClient.notificationAccount.findMany({
+      where: {
+        accountId: accountId,
+      },
+      include: {
+        account: {
+          include: {
+            customer: true,
+            employee: true,
+          },
+        },
+      },
+    });
+    return noti;
   },
 };
 
@@ -131,6 +182,24 @@ const mutations = {
             "https://ktlpvxvfzxexvghactxx.supabase.co/storage/v1/object/sign/helpu_buckets/default_avatar.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJoZWxwdV9idWNrZXRzL2RlZmF1bHRfYXZhdGFyLnBuZyIsImlhdCI6MTcxNjUxMzgwMiwiZXhwIjoxNzQ4MDQ5ODAyfQ.gcbgZYp4FxUYWClgHSGLrE-KaWXXmHhX4qx-rXfi_Mo&t=2024-05-24T01%3A23%3A25.000Z",
         },
       });
+
+      const notificationAccount1 =
+        await prismaClient.notificationAccount.create({
+          data: {
+            accountId: "9f7fdb0b-dca2-4833-ac9c-073a783a0849",
+            title: "An account was created",
+            description: `An employee account ${responseAccountInfo.email} was created. Check on accounts list to view more details`,
+          },
+        });
+
+      const notificationAccount2 =
+        await prismaClient.notificationAccount.create({
+          data: {
+            accountId: responseEmployeeInfo.id,
+            title: "Your account created successful",
+            description: `Your account ${responseAccountInfo.email} was created. You can change another info in the settings`,
+          },
+        });
     } else {
       responseAccountInfo = await prismaClient.accountInfo.create({
         data: {
@@ -169,6 +238,24 @@ const mutations = {
             "https://ktlpvxvfzxexvghactxx.supabase.co/storage/v1/object/sign/helpu_buckets/default_avatar.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJoZWxwdV9idWNrZXRzL2RlZmF1bHRfYXZhdGFyLnBuZyIsImlhdCI6MTcxNjUxMzgwMiwiZXhwIjoxNzQ4MDQ5ODAyfQ.gcbgZYp4FxUYWClgHSGLrE-KaWXXmHhX4qx-rXfi_Mo&t=2024-05-24T01%3A23%3A25.000Z",
         },
       });
+
+      const notificationAccount1 =
+        await prismaClient.notificationAccount.create({
+          data: {
+            accountId: "9f7fdb0b-dca2-4833-ac9c-073a783a0849",
+            title: "An account was created",
+            description: `An customer account ${responseAccountInfo.email} was created. Check on accounts list to view more details`,
+          },
+        });
+
+      const notificationAccount2 =
+        await prismaClient.notificationAccount.create({
+          data: {
+            accountId: responseCustomerInfo.id,
+            title: "Your account created successful",
+            description: `Your account ${responseAccountInfo.email} was created. You can change another info in the settings`,
+          },
+        });
     }
 
     const responseSessionInfo = await prismaClient.sessionInfo.create({
@@ -208,6 +295,177 @@ const mutations = {
     });
 
     return responseRequest;
+  },
+  updateCustomerInfo: async (
+    _: any,
+    {
+      updateCustomerInput,
+    }: {
+      updateCustomerInput: UpdateCustomerInput;
+    }
+  ) => {
+    let customerResponse;
+
+    if (updateCustomerInput.imageUri == "") {
+      customerResponse = await prismaClient.customer.update({
+        where: {
+          id: updateCustomerInput.customerId,
+        },
+        data: {
+          name: updateCustomerInput.name,
+          phoneNumber: updateCustomerInput.phone,
+        },
+      });
+    } else {
+      customerResponse = await prismaClient.customer.update({
+        where: {
+          id: updateCustomerInput.customerId,
+        },
+        data: {
+          name: updateCustomerInput.name,
+          phoneNumber: updateCustomerInput.phone,
+          imageUri: updateCustomerInput.imageUri,
+        },
+      });
+    }
+
+    const responseAccountInfo = await prismaClient.accountInfo.findFirst({
+      where: {
+        customer: {
+          id: customerResponse.id,
+        },
+      },
+      include: {
+        employee: {
+          include: {
+            employeeAddresses: {
+              include: {
+                address: true,
+              },
+            },
+          },
+        },
+        customer: {
+          include: {
+            customerAddresses: {
+              include: {
+                address: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return responseAccountInfo;
+  },
+  updateEmployeeInfo: async (
+    _: any,
+    {
+      updateEmployeeInput,
+    }: {
+      updateEmployeeInput: UpdateEmployeeInput;
+    }
+  ) => {
+    let employeeResponse;
+
+    if (updateEmployeeInput.imageUri == "") {
+      employeeResponse = await prismaClient.employee.update({
+        where: {
+          id: updateEmployeeInput.employeeId,
+        },
+        data: {
+          name: updateEmployeeInput.name,
+          phoneNumber: updateEmployeeInput.phone,
+          description: updateEmployeeInput.description,
+        },
+      });
+    } else {
+      employeeResponse = await prismaClient.employee.update({
+        where: {
+          id: updateEmployeeInput.employeeId,
+        },
+        data: {
+          name: updateEmployeeInput.name,
+          phoneNumber: updateEmployeeInput.phone,
+          imageUri: updateEmployeeInput.imageUri,
+          description: updateEmployeeInput.description,
+        },
+      });
+    }
+
+    const responseAccountInfo = await prismaClient.accountInfo.findFirst({
+      where: {
+        employee: {
+          id: employeeResponse.id,
+        },
+      },
+      include: {
+        employee: {
+          include: {
+            employeeAddresses: {
+              include: {
+                address: true,
+              },
+            },
+          },
+        },
+        customer: {
+          include: {
+            customerAddresses: {
+              include: {
+                address: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return responseAccountInfo;
+  },
+  changeNotiStatus: async (
+    _: any,
+    {
+      changeNotiInput,
+    }: {
+      changeNotiInput: ChangeNotiInput;
+    }
+  ) => {
+    const responseNoti = await prismaClient.notificationAccount.update({
+      where: {
+        id: changeNotiInput.id,
+      },
+      data: {
+        status: changeNotiInput.status == "READ" ? "READ" : "UNREAD",
+      },
+    });
+
+    return responseNoti;
+  },
+  updateAccountStatus: async (
+    _: any,
+    {
+      accountStatusInput,
+    }: {
+      accountStatusInput: AccountStatusInput;
+    }
+  ) => {
+    const res = await prismaClient.accountInfo.update({
+      where: {
+        id: accountStatusInput.accountId,
+      },
+      data: {
+        status:
+          accountStatusInput.status == "NONE"
+            ? "NONE"
+            : accountStatusInput.status == "BANNED"
+            ? "BANNED"
+            : "WARNING",
+      },
+    });
+
+    return res;
   },
 };
 

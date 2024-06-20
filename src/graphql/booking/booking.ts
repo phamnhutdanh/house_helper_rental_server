@@ -4,7 +4,9 @@ import { bookingResolver } from "./bookingResolver";
 export default class Booking {
   static query() {
     return `#graphql
-  
+        getAllBookingOfCustomer(customerId: String): [Booking]
+        getAllBooking(employeeId: String): [Booking]
+        getBookingById(id: String): Booking
     `;
   }
 
@@ -12,6 +14,8 @@ export default class Booking {
     return `#graphql
        createBooking(createBookingInput: CreateBookingInput,
                       createBookingServiceDetailListInput: [CreateBookingServiceDetailInput]): Booking
+       changeBookingStatus(changeBookingStatusInput: ChangeBookingStatusInput): Booking
+       employeeAcceptBooking(employeeAcceptBookingInput: EmployeeAcceptBookingInput): Booking
     `;
   }
 
@@ -34,6 +38,16 @@ export default class Booking {
             EVERY_DAY
             EVERY_WEEK
             EVERY_MONTH
+        }
+
+        input ChangeBookingStatusInput {
+            id: String
+            bookingStatus: String
+        }
+
+        input EmployeeAcceptBookingInput {
+            bookingId: String
+            employeeId: String
         }
 
         input CreateBookingInput {
@@ -63,14 +77,19 @@ export default class Booking {
             createdAt: String
             updatedAt: String
             serviceId: String
+            service: Service
             customerId: String
             customerAddressId: String
+            customerAddress: CustomerAddress
             employeeId: String
+            bookingServiceDetails: [BookingServiceDetail]
+            ratingEmployee: RatingEmployee
         }
 
         type BookingServiceDetail {    
             id: String
             serviceDetailId: String
+            serviceDetails: ServiceDetails
             bookingId: String
         }
     `;

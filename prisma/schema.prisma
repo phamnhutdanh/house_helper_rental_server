@@ -85,9 +85,10 @@ model AccountInfo {
   updatedAt   DateTime        @updatedAt
   status      AccountStatus   @default(NONE)
 
-  sessions SessionInfo[]
-  customer Customer?
-  employee Employee?
+  sessions            SessionInfo[]
+  customer            Customer?
+  employee            Employee?
+  notificationAccounts NotificationAccount[]
 
   @@map("accounts_info")
 }
@@ -167,11 +168,10 @@ model Customer {
   accountInfoId String      @unique
   accountInfo   AccountInfo @relation(fields: [accountInfoId], references: [id], onDelete: Cascade)
 
-  ratings               RatingEmployee[]
-  customerAddresses     CustomerAddress[]
-  favoriteEmployees     FavoriteEmployee[]
-  notificationCustomers NotificationCustomer[]
-  bookings              Booking[]
+  ratings           RatingEmployee[]
+  customerAddresses CustomerAddress[]
+  favoriteEmployees FavoriteEmployee[]
+  bookings          Booking[]
 
   @@map("customers")
 }
@@ -203,12 +203,11 @@ model Employee {
   accountInfoId String      @unique
   accountInfo   AccountInfo @relation(fields: [accountInfoId], references: [id], onDelete: Cascade)
 
-  ratings               RatingEmployee[]
-  employeeAddresses     EmployeeAddress[]
-  schedules             Schedule[]
-  favoriteEmployees     FavoriteEmployee[]
-  notificationEmployees NotificationEmployee[]
-  bookings              Booking[]
+  ratings           RatingEmployee[]
+  employeeAddresses EmployeeAddress[]
+  schedules         Schedule[]
+  favoriteEmployees FavoriteEmployee[]
+  bookings          Booking[]
 
   @@map("employees")
 }
@@ -274,7 +273,7 @@ model Booking {
   employee          Employee?       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   bookingServiceDetails BookingServiceDetail[]
-  ratingEmployees       RatingEmployee[]
+  ratingEmployee        RatingEmployee?
 
   @@map("bookings")
 }
@@ -300,13 +299,13 @@ model Schedule {
 
 model RatingEmployee {
   id      String  @id @default(cuid())
-  score   Float
+  score   Int
   comment String? @default("")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  bookingId  String
+  bookingId  String   @unique
   booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
@@ -326,32 +325,17 @@ model FavoriteEmployee {
   @@map("favorite_employees")
 }
 
-model NotificationEmployee {
+model NotificationAccount {
   id          String             @id @default(cuid())
   title       String
   description String
   status      NotificationStatus @default(UNREAD)
   imageUri    String?            @default("")
-  employeeId  String
-  employee    Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  accountId   String
+  account     AccountInfo        @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("notification_employees")
-}
-
-model NotificationCustomer {
-  id          String             @id @default(cuid())
-  title       String
-  description String
-  status      NotificationStatus @default(UNREAD)
-  imageUri    String?            @default("")
-  customerId  String
-  customer    Customer           @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("notification_customers")
+  @@map("notification_accounts")
 }

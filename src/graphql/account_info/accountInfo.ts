@@ -7,6 +7,7 @@ export default class AccountInfo {
         getAllAccountInfos: [AccountInfo]
         getAccountInfoById(id: String): AccountInfo
         getAllEmployeeAccountRequests: [EmployeeAccountRequest]
+        getNotificationOfAccount(accountId: String): [NotificationAccount]
     `;
   }
 
@@ -14,7 +15,11 @@ export default class AccountInfo {
     return `#graphql
         createAccount(createAccountInput: CreateAccountInput, 
                               createSessionInput: CreateSessionInput): AccountInfo  
-        createEmployeeAccountRequest(createEmployeeAccountRequest: CreateEmployeeAccountRequest): EmployeeAccountRequest                         
+        createEmployeeAccountRequest(createEmployeeAccountRequest: CreateEmployeeAccountRequest): EmployeeAccountRequest
+        updateCustomerInfo(updateCustomerInput: UpdateCustomerInput): AccountInfo    
+        updateEmployeeInfo(updateEmployeeInput: UpdateEmployeeInput): AccountInfo           
+        updateAccountStatus(accountStatusInput: AccountStatusInput): AccountInfo           
+        changeNotiStatus(changeNotiInput: ChangeNotiInput): NotificationAccount
     `;
   }
 
@@ -36,6 +41,36 @@ export default class AccountInfo {
             PENDING
             ACCEPTED
             CANCELED
+        }
+
+        enum NotificationStatus {
+            READ
+            UNREAD
+        }
+
+        input AccountStatusInput {
+            accountId: String
+            status: String
+        }
+
+        input ChangeNotiInput {
+            id: String
+            status: String
+        }
+
+        input UpdateCustomerInput {
+            customerId: String
+            name: String
+            phone: String
+            imageUri: String
+        }
+
+         input UpdateEmployeeInput {
+            employeeId: String
+            name: String
+            phone: String
+            imageUri: String
+            description: String
         }
 
         input CreateAccountInput {
@@ -75,6 +110,18 @@ export default class AccountInfo {
             customer: Customer
             employee: Employee
         }
+        
+        type NotificationAccount {
+            id: String
+            title: String
+            description: String
+            status: NotificationStatus
+            imageUri: String
+            accountId: String
+            account: AccountInfo
+            createdAt: String
+            updatedAt: String
+        }
 
         type EmployeeAccountRequest {    
             id: String
@@ -101,6 +148,7 @@ export default class AccountInfo {
             tokenType: String
             accountInfoId: String
         }
+
     `;
   }
 

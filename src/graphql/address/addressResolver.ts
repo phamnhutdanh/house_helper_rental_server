@@ -10,6 +10,10 @@ type CreateCustomerAddressInput = {
   customerId: string;
   isDefault: boolean;
 };
+type CreateEmployeeAddressInput = {
+  employeeId: string;
+  isDefault: boolean;
+};
 
 const queries = {
   getAllAddressOfCustomer: async (
@@ -30,6 +34,25 @@ const queries = {
       },
     });
     return customerAddress;
+  },
+  getAllAddressOfEmployee: async (
+    _: any,
+    {
+      employeeId,
+    }: {
+      employeeId: string;
+    }
+  ) => {
+    const addresses = await prismaClient.employeeAddress.findMany({
+      where: {
+        employeeId: employeeId,
+      },
+      include: {
+        address: true,
+        employee: true,
+      },
+    });
+    return addresses;
   },
   getCustomerAddressById: async (
     _: any,
@@ -53,6 +76,21 @@ const queries = {
 };
 
 const mutations = {
+  removeCustomerAddress: async (
+    _: any,
+    {
+      id,
+    }: {
+      id: string;
+    }
+  ) => {
+    const customerAddress = await prismaClient.customerAddress.delete({
+      where: {
+        id: id,
+      },
+    });
+    return customerAddress;
+  },
   createCustomerAddress: async (
     _: any,
     {
@@ -99,6 +137,69 @@ const mutations = {
     }
 
     return customerAddressResponse;
+  },
+
+  removeEmployeeAddress: async (
+    _: any,
+    {
+      id,
+    }: {
+      id: string;
+    }
+  ) => {
+    const address = await prismaClient.employeeAddress.delete({
+      where: {
+        id: id,
+      },
+    });
+    return address;
+  },
+  createEmployeeAddress: async (
+    _: any,
+    {
+      createAddressInput,
+      createEmployeeAddressInput,
+    }: {
+      createAddressInput: CreateAddressInput;
+      createEmployeeAddressInput: CreateEmployeeAddressInput;
+    }
+  ) => {
+    const addressResponse = await prismaClient.address.create({
+      data: {
+        address: createAddressInput.address,
+        fullName: createAddressInput.fullName,
+        phone: createAddressInput.phone,
+      },
+    });
+
+    let empAddressResponse;
+    if (createEmployeeAddressInput.isDefault) {
+      empAddressResponse = await prismaClient.employeeAddress.create({
+        data: {
+          addressType: "DEFAULT",
+          addressId: addressResponse.id,
+          employeeId: createEmployeeAddressInput.employeeId,
+        },
+        include: {
+          address: true,
+          employee: true,
+        },
+      });
+    } else {
+      empAddressResponse = await prismaClient.employeeAddress.create({
+        data: {
+          addressType: "NONE",
+          addressId: addressResponse.id,
+          employeeId: createEmployeeAddressInput.employeeId,
+        },
+        include: {
+          employee: true,
+          address: true,
+        },
+      });
+    }
+
+    return empAddressResponse;
   },
 };
 

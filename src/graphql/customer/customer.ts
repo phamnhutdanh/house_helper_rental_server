@@ -24,13 +24,6 @@ export default class Customer {
             accountInfoId: String
             customerAddresses: [CustomerAddress]
         }
-
-        type NotificationCustomer {    
-            id: String
-            description: String
-            imageUri: String
-            customerId: String
-        }
     `;
   }
 

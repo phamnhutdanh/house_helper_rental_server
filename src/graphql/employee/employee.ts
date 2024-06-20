@@ -6,17 +6,35 @@ export default class Employee {
     return `#graphql
         getAllEmployees: [Employee]
         getTopEmployees: [Employee]
+        getEmployeeById(id: String): Employee
+        checkFavorite(favoriteInput: FavoriteInput): Boolean
+        getFavoriteEmployeesOfCustomer(customerId: String): [FavoriteEmployee]
     `;
   }
 
   static mutation() {
     return `#graphql
-       
+       createRatingEmployee(createRatingEmployeeInput: CreateRatingEmployeeInput): RatingEmployee
+       addToFavorite(favoriteInput: FavoriteInput): FavoriteEmployee
+       removeFromFavorite(favoriteInput: FavoriteInput): FavoriteEmployee
     `;
   }
 
   static typeDef() {
     return `#graphql
+        input FavoriteInput {
+            employeeId: String
+            customerId: String
+        }
+
+        input CreateRatingEmployeeInput {
+            score: Int
+            comment: String
+            bookingId: String
+            employeeId: String
+            customerId: String
+        }
+
         type Employee {    
             id: String
             name: String
@@ -26,21 +44,31 @@ export default class Employee {
             age: Int
             workingHours: Int
             accountInfoId: String
+            accountInfo: AccountInfo
             averageRating: Float
+            ratings: [RatingEmployee]
             employeeAddresses: [EmployeeAddress]
+        }
+
+        type RatingEmployee {    
+            id: String
+            score: Int
+            comment: String
+            createdAt: String
+            updatedAt: String
+
+            bookingId: String
+            customerId: String
+            customer: Customer
+            employeeId: String
         }
 
         type FavoriteEmployee {    
             id: String
             customerId: String
+            customer: Customer
             employeeId: String
-        }
-
-        type NotificationEmployee {    
-            id: String
-            description: String
-            imageUri: String
-            employeeId: String
+            employee: Employee
         }
     `;
   }
